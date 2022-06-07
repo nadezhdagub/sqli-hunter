@@ -6,9 +6,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.*;
 import java.io.*;
-import java.util.Random;
-import java.util.Scanner;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 
 @WebServlet("/hello")
@@ -75,32 +78,17 @@ public class MainServlet extends HttpServlet{
         HttpSession session = req.getSession();
 
         String username = req.getParameter("username");
-        /*
-        String line = choose(new File("Queries20.txt"));
-        System.out.println(line);
-        String str = line;
-        File file = new File("output20.txt");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // otherwise delete it for fresh output
-            file.delete();
-        }
-
-        outputToFile(str, file);
-        */
-
+       // /*
+        String line = choose(new File("D:\\gitlab\\sqli\\Queries20.txt"));
         resp.setContentType("text/html");
         PrintWriter printWriter = resp.getWriter();
         if (username == null) {
             printWriter.write("Hello, Anonymous" + "<br>");
+            printWriter.write("Hello, " +  line.replace(" ", "+") + "<br>");
         }
-         /*
-        else if (username == line){
+       //  /*
+
+        else if (username.equals(line)){
             int prediction;
             int stringCounter = 0;
             int condPos = 0;
@@ -122,15 +110,10 @@ public class MainServlet extends HttpServlet{
             } else if (label == '1') {
                 condPos++;
                 flag1 = true;
-            } else {
-                System.out.println("Invalid label...");
             }
-            // trace
-            System.out.printf("True Label = %c\n", label);
 
             // get the sql string
             String sqlString = line.substring(2);
-            System.out.printf("SQL = %s\n", sqlString.toLowerCase());
 
             // if true is returned, then classify as malware, otherwise
             // benign
@@ -140,6 +123,15 @@ public class MainServlet extends HttpServlet{
                     // hit
                     truePos++;
                     flag2 = true;
+                    printWriter.write("not allowed" + "<br>");
+                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                    try {
+                        URI uri = new URI("https://base.garant.ru/10108000/");
+                        desktop.browse(uri);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+
                     session.invalidate();
                 } else {
                     // false alarm
@@ -156,38 +148,49 @@ public class MainServlet extends HttpServlet{
                     // missed it
                     falseNeg++;
                     flag3 = true;
+                    printWriter.write("not allowed" + "<br>");
+                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                    try {
+                        URI uri = new URI("https://base.garant.ru/10108000/");
+                        desktop.browse(uri);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
                     session.invalidate();
                 }
             }
-
-            printWriter.write("Hello, " + username + "<br>");
-        }
-         */
-
-        else if (username == "aaa"){
-            printWriter.write("Hello, " + "bla bla" + "<br>");
         }
         else {
-            printWriter.write("Hello, " + username + "<br>");
+            printWriter.write("Hello, " +  "<br>" + line + "<br>");
         }
+        // */
+
         printWriter.close();
     }
 
     public static String choose(File f) throws FileNotFoundException
     {
-        String result = null;
         Random rand = new Random();
-        int n = 0;
-        for(Scanner sc = new Scanner(f); sc.hasNext(); )
-        {
-            ++n;
-            String line = sc.nextLine();
-            if(rand.nextInt(n) == 0)
-                result = line;
+        List<String> wordsList = new ArrayList<>();
+        try{
+            FileReader fileReader = new FileReader(f);
+
+            // create new buffered reader
+            BufferedReader br = new BufferedReader(fileReader);
+            String read;
+            while ((read = br.readLine()) != null){
+                wordsList.add(read);               // читаем все слова из файла и добавляем в коллекцию
+            }
+            System.out.println(wordsList);
+        }catch(FileNotFoundException e){
+            System.out.println("File not found.");
+        }catch(IOException e){
+            System.out.println("I/O error.");
         }
 
-        return result;
+        return wordsList.get(4);
     }
+
 
     public static boolean sqlHandler(String sqlString) {
 
@@ -208,11 +211,6 @@ public class MainServlet extends HttpServlet{
 
     }
 
-    /**
-     * Method to check for stringsToCheck in the string passed in
-     * @param sqlToCheck - the SQL sample
-     * @return a bool, if true then it is malicious, if false then benign
-     */
     public static boolean sqlStringChecker(String sqlToCheck) {
 
         boolean pass = false;
@@ -246,11 +244,6 @@ public class MainServlet extends HttpServlet{
         return pass;
     }
 
-    /**
-     * Method to check SQL sample against the regexes
-     * @param sqlToCheck
-     * @return a bool, true if malicious, false if benign
-     */
     public static boolean sqlRegexChecker(String sqlToCheck) {
 
         System.out.println("\nRunning SQL Regex Checker");
@@ -296,30 +289,5 @@ public class MainServlet extends HttpServlet{
             }
         }
         return overall;
-    }
-
-    public static void outputToFile(String SQL, File file) {
-
-        // create result string
-        String result = SQL  + "\r\n";
-
-        try {
-
-            // true = append to end of file, false = write from the start
-            FileWriter fileWriter = new FileWriter(file.getAbsolutePath(), true);
-
-            // do the writing
-            BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
-            bufferWriter.write(result);
-
-            // close resources
-            bufferWriter.close();
-            fileWriter.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
