@@ -2,7 +2,9 @@
 
 
 ## Getting Started
+
 Clone this project and open project directory from your IDE (Intellij idea)
+
 If you want to run from the terminal, then do:
 ```
 mvn cleam package
