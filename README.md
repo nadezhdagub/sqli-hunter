@@ -5,6 +5,8 @@
 
 Clone this project and open project directory from your IDE (Intellij idea)
 
+I run on windows operating environment, so download the necessary programs and libraries in advance (Intellij idea, maven library, tomcat library)
+
 If you want to run from the terminal, then do:
 ```
 mvn cleam package
@@ -12,6 +14,7 @@ mvn cleam package
 ```
 mvn compile 
 ```
+run the version of tomcat you downloaded (I have 9)
 ```
 mvn package tomcat9:run-war
 ```
